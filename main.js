@@ -3,6 +3,7 @@ const { Client, GatewayIntentBits } = require("discord.js");
 const rateLimit = require("express-rate-limit");
 
 const app = express();
+app.set("trust proxy", true);
 const port = process.env.PORT;
 
 const CHANNEL_ID = "1358469943510962343";
