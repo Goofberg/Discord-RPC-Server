@@ -1,5 +1,6 @@
 const express = require("express");
 const { Client, GatewayIntentBits } = require("discord.js");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 const port = process.env.PORT;
@@ -14,7 +15,14 @@ client.once("ready", () => {
   console.log(`🤖 Bot is online as ${client.user.tag}`);
 });
 
-app.get("/jumpscare", async (req, res) => {
+const jumpscareLimiter = rateLimit({
+  windowMs: 10 * 1000,
+  max: 1,
+  message: "⏳ Too many jumpscares! Please wait a bit.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.get("/jumpscare", jumpscareLimiter, async (req, res) => {
   try {
     const channel = await client.channels.fetch(CHANNEL_ID);
     if (channel.isTextBased()) {
