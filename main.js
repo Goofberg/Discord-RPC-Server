@@ -2,7 +2,7 @@ const express = require("express");
 const { Client, GatewayIntentBits } = require("discord.js");
 
 const app = express();
-const port = 5156;
+const port = process.env.PORT;
 
 const CHANNEL_ID = "1358469943510962343";
 
