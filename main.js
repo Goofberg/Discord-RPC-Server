@@ -2,10 +2,9 @@ const express = require("express");
 const { Client, GatewayIntentBits } = require("discord.js");
 
 const app = express();
-const port = 3000;
+const port = 5156;
 
-const BOT_TOKEN = "YOUR_BOT_TOKEN";
-const CHANNEL_ID = "YOUR_CHANNEL_ID";
+const CHANNEL_ID = "1358469943510962343";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
@@ -35,4 +34,4 @@ app.listen(port, () => {
 });
 
 // Login the bot
-client.login(BOT_TOKEN);
+client.login(process.env.TOKEN);
