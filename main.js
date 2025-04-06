@@ -18,7 +18,7 @@ app.get("/jumpscare", async (req, res) => {
   try {
     const channel = await client.channels.fetch(CHANNEL_ID);
     if (channel.isTextBased()) {
-      await channel.send("⚠️ Someone clicked the **JUMPSCARE** button!");
+      await channel.send("<@609378018510635010> ⚠️ Someone clicked the **JUMPSCARE** button!");
     }
 
     res.send("Jumpscare triggered!");
