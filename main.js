@@ -16,7 +16,7 @@ client.once("ready", () => {
 });
 
 const jumpscareLimiter = rateLimit({
-  windowMs: 10 * 1000,
+  windowMs: 20 * 1000,
   max: 2,
   message: "⏳ Too many jumpscares! Please wait a bit.",
   standardHeaders: true,
