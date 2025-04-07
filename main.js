@@ -25,6 +25,9 @@ wss.on("connection", (ws, req) => {
   });
 
   ws.send(JSON.stringify({ message: "Connected to WebSocket server!" }));
+  wss.on('error', (err) => {
+    console.error("WebSocket Server error:", err);
+  });
 });
 
 const client = new Client({
@@ -75,6 +78,7 @@ app.server.on('upgrade', (request, socket, head) => {
     const token = url.searchParams.get("token");
     console.log(`A user want to connect to ws with TOKEN ${token}, with path ${url}`)
     if (token !== AUTH_TOKEN) {
+      socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
       socket.destroy();
       return;
     }
@@ -83,6 +87,7 @@ app.server.on('upgrade', (request, socket, head) => {
       wss.emit('connection', ws, request);
     });
   } else {
+    socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
     socket.destroy();
   }
 });
