@@ -75,6 +75,7 @@ app.server.on('upgrade', (request, socket, head) => {
   const path = url.pathname;
   
   const token = url.searchParams.get("token");
+  console.log(`there a trying connection, ${token}, AP: ${token === AUTH_TOKEN}`)
   if (path === '/api/ws' && token === AUTH_TOKEN) {
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request);
