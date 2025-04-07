@@ -11,7 +11,7 @@ const port = process.env.PORT;
 const wss = new WebSocket.Server({ noServer: true });
 
 const CHANNEL_ID = "1358469943510962343";
-const AUTH_TOKEN = "super-secret-token";
+const AUTH_TOKEN = "9183617-project-aegis";
 const clients = new Set();
 
 
@@ -74,14 +74,8 @@ app.server.on('upgrade', (request, socket, head) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
   const path = url.pathname;
   
-  if (path === '/api/ws') {
-    const token = url.searchParams.get("token");
-    
-    if (token !== AUTH_TOKEN) {
-      socket.destroy();
-      return;
-    }
-    
+  const token = url.searchParams.get("token");
+  if (path === '/api/ws' && token === AUTH_TOKEN) {
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request);
     });
