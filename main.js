@@ -65,7 +65,7 @@ app.get("/jumpscare", jumpscareLimiter, async (req, res) => {
 });
 
 
-app.listen(port, () => {
+app.server = app.listen(port, () => {
   console.log(`🖥️ Local API running at http://localhost:${port}/jumpscare`);
   console.log(`🔧 WebSocket server running on ws://localhost:${port}/api/ws?token=${AUTH_TOKEN}`);
 });
