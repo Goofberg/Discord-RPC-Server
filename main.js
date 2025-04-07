@@ -17,28 +17,6 @@ const AUTH_TOKEN = "super-secret-token";
 const clients = new Set();
 
 
-server.on("upgrade", (request, socket, head) => {
-  const url = new URL(request.url, `http://${request.headers.host}`);
-  const path = url.pathname;
-
-  console.log(`Check path, ${path}`)
-  
-  if (path === "/api/ws") {
-    const token = url.searchParams.get("token");
-    
-    if (token !== AUTH_TOKEN) {
-      socket.destroy();
-      return;
-    }
-    
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit("connection", ws, request);
-    });
-  } else {
-    socket.destroy(); // Close the socket if not /api/ws
-  }
-});
-
 wss.on("connection", (ws, req) => {
   clients.add(ws);
   console.log("🔌 WebSocket client connected");
@@ -90,5 +68,24 @@ app.get("/jumpscare", jumpscareLimiter, async (req, res) => {
 app.listen(port, () => {
   console.log(`🖥️ Local API running at http://localhost:${port}/jumpscare`);
   console.log(`🔧 WebSocket server running on ws://localhost:${port}/api/ws?token=${AUTH_TOKEN}`);
+});
+app.server.on('upgrade', (request, socket, head) => {
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  const path = url.pathname;
+  
+  if (request.url === '/api/ws') {
+    const token = url.searchParams.get("token");
+    
+    if (token !== AUTH_TOKEN) {
+      socket.destroy();
+      return;
+    }
+    
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit('connection', ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
 });
 client.login(process.env.TOKEN);
