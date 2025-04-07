@@ -37,6 +37,14 @@ wss.on("connection", (ws, req) => {
   ws.send(JSON.stringify({ message: "Connected to WebSocket server!" }));
 });
 
+const client = new Client({
+   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+ });
+ 
+ client.once("ready", () => {
+   console.log(`🤖 Bot is online as ${client.user.tag}`);
+ });
+
 const jumpscareLimiter = rateLimit({
   windowMs: 20 * 1000,
   max: 2,
