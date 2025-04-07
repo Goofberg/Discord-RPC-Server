@@ -10,45 +10,31 @@ app.set("trust proxy", true);
 const port = process.env.PORT;
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ noServer: true });
+const wss = new WebSocket.Server({ server });
 
 const CHANNEL_ID = "1358469943510962343";
 const AUTH_TOKEN = "super-secret-token";
 const clients = new Set();
 
 
-server.on("upgrade", (request, socket, head) => {
-  const url = new URL(request.url, `http://${request.headers.host}`);
+wss.on("connection", (ws, req) => {
+  const url = new URL(req.url, `http://${req.headers.host}`);
   const token = url.searchParams.get("token");
 
   if (token !== AUTH_TOKEN) {
-    socket.destroy();
+    ws.close(4001, "Unauthorized");
     return;
   }
 
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit("connection", ws, request);
-  });
-});
-
-wss.on("connection", (ws, req) => {
   clients.add(ws);
-  // console.log("🔌 WebSocket client connected");
+  console.log("🔌 WebSocket client connected");
 
   ws.on("close", () => {
     clients.delete(ws);
-    // console.log("❌ WebSocket client disconnected");
+    console.log("❌ WebSocket client disconnected");
   });
 
   ws.send(JSON.stringify({ message: "Connected to WebSocket server!" }));
-});
-
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-});
-
-client.once("ready", () => {
-  console.log(`🤖 Bot is online as ${client.user.tag}`);
 });
 
 const jumpscareLimiter = rateLimit({
