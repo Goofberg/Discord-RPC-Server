@@ -10,22 +10,34 @@ app.set("trust proxy", true);
 const port = process.env.PORT;
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ noServer: true });
 
 const CHANNEL_ID = "1358469943510962343";
 const AUTH_TOKEN = "super-secret-token";
 const clients = new Set();
 
 
-wss.on("connection", (ws, req) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  const token = url.searchParams.get("token");
-
-  if (token !== AUTH_TOKEN) {
-    ws.close(4001, "Unauthorized");
-    return;
+server.on("upgrade", (request, socket, head) => {
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  const path = url.pathname;
+  
+  if (path === "/api/ws") {
+    const token = url.searchParams.get("token");
+    
+    if (token !== AUTH_TOKEN) {
+      socket.destroy();
+      return;
+    }
+    
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit("connection", ws, request);
+    });
+  } else {
+    socket.destroy(); // Close the socket if not /api/ws
   }
+});
 
+wss.on("connection", (ws, req) => {
   clients.add(ws);
   console.log("🔌 WebSocket client connected");
 
