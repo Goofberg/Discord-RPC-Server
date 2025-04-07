@@ -17,16 +17,15 @@ const clients = new Set();
 
 wss.on("connection", (ws, req) => {
   clients.add(ws);
-  // console.log("🔌 WebSocket client connected");
+  ws.send(JSON.stringify({ message: "Connected to WebSocket server!" }));
 
   ws.on("close", () => {
     clients.delete(ws);
-    // console.log("❌ WebSocket client disconnected");
   });
-
-  ws.send(JSON.stringify({ message: "Connected to WebSocket server!" }));
-  wss.on('error', (err) => {
-    console.error("WebSocket Server error:", err);
+  ws.on("error", (err) => {
+    console.error("⚠️ WebSocket client error:", err.message);
+    clients.delete(ws);
+    ws.terminate(); 
   });
 });
 
@@ -54,7 +53,13 @@ app.get("/jumpscare", jumpscareLimiter, async (req, res) => {
 
     for (const ws of clients) {
       if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "jumpscare", timestamp: Date.now() }));
+        try {
+          ws.send(JSON.stringify({ type: "jumpscare", timestamp: Date.now() }));
+        } catch (err) {
+          console.error("Error sending to client:", err.message);
+          ws.terminate();
+          clients.delete(ws);
+        }
       }
     }
 
