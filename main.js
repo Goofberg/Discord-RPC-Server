@@ -1,5 +1,4 @@
 const express = require("express");
-const http = require("http");
 const { Client, GatewayIntentBits } = require("discord.js");
 const rateLimit = require("express-rate-limit");
 const WebSocket = require('ws');
@@ -9,7 +8,6 @@ const app = express();
 app.set("trust proxy", 1);
 const port = process.env.PORT;
 
-const server = http.createServer(app);
 const wss = new WebSocket.Server({ noServer: true });
 
 const CHANNEL_ID = "1358469943510962343";
@@ -19,11 +17,11 @@ const clients = new Set();
 
 wss.on("connection", (ws, req) => {
   clients.add(ws);
-  console.log("🔌 WebSocket client connected");
+  // console.log("🔌 WebSocket client connected");
 
   ws.on("close", () => {
     clients.delete(ws);
-    console.log("❌ WebSocket client disconnected");
+    // console.log("❌ WebSocket client disconnected");
   });
 
   ws.send(JSON.stringify({ message: "Connected to WebSocket server!" }));
