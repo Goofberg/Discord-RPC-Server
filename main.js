@@ -1,4 +1,5 @@
 const express = require("express");
+const http = require("http");
 const { Client, GatewayIntentBits } = require("discord.js");
 const rateLimit = require("express-rate-limit");
 const WebSocket = require('ws');
