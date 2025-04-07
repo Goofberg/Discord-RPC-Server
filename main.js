@@ -20,6 +20,8 @@ const clients = new Set();
 server.on("upgrade", (request, socket, head) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
   const path = url.pathname;
+
+  console.log(`Check path, ${path}`)
   
   if (path === "/api/ws") {
     const token = url.searchParams.get("token");
