@@ -71,13 +71,13 @@ app.server.on('upgrade', (request, socket, head) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
   const path = url.pathname;
   
-  if (request.url === '/api/ws') {
+  if (path === '/api/ws') {
     const token = url.searchParams.get("token");
     console.log(`A user want to connect to ws with TOKEN ${token}, with path ${url}`)
-    //if (token !== AUTH_TOKEN) {
-    //  socket.destroy();
-    //  return;
-    //}
+    if (token !== AUTH_TOKEN) {
+      socket.destroy();
+      return;
+    }
     
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request);
