@@ -6,7 +6,7 @@ const WebSocket = require('ws');
 
 
 const app = express();
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 const port = process.env.PORT;
 
 const server = http.createServer(app);
